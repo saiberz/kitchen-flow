@@ -13,6 +13,7 @@ defmodule KitchenFlow.Orders.Order do
     field :notes, :string
 
     has_many :items, KitchenFlow.Orders.OrderItem
+    has_many :station_tickets, KitchenFlow.Orders.StationTicket
 
     timestamps()
   end
