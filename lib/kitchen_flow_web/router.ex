@@ -7,5 +7,10 @@ defmodule KitchenFlowWeb.Router do
 
   scope "/api", KitchenFlowWeb do
     pipe_through :api
+
+    resources "/menu-items", MenuItemController, only: [:index, :create]
+    resources "/orders", OrderController, only: [:index, :show, :create]
+    get "/tickets", StationTicketController, :index
+    patch "/tickets/:id/status", StationTicketController, :update_status
   end
 end
