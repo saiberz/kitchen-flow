@@ -22,5 +22,6 @@ defmodule KitchenFlow.Orders.OrderItem do
     order_item
     |> cast(attrs, [:menu_item_id, :quantity, :notes, :station, :item_name, :prep_time_seconds])
     |> validate_required([:menu_item_id, :quantity, :station, :item_name])
+    |> validate_number(:quantity, greater_than: 0)
   end
 end

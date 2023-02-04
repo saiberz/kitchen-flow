@@ -24,6 +24,7 @@ defmodule KitchenFlow.Orders.Order do
     |> validate_required([:table_number])
     |> validate_number(:table_number, greater_than: 0)
     |> validate_inclusion(:status, @statuses)
-    |> cast_assoc(:items, with: &KitchenFlow.Orders.OrderItem.changeset/2)
+    |> cast_assoc(:items, required: true, with: &KitchenFlow.Orders.OrderItem.changeset/2)
+    |> validate_length(:items, min: 1)
   end
 end
