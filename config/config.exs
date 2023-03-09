@@ -28,4 +28,11 @@ config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
+config :kitchen_flow, :broker,
+  url: "amqp://guest:guest@localhost:5672",
+  exchange: "kitchen.events",
+  dlx_exchange: "kitchen.dlx",
+  dlq_queue: "kitchen.dlq",
+  enabled: true
+
 import_config "#{config_env()}.exs"
