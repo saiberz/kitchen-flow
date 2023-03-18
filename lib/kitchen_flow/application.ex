@@ -15,6 +15,7 @@ defmodule KitchenFlow.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: KitchenFlow.PubSub},
       # Start the Endpoint (http/https)
+      KitchenFlow.Broker.ConnectionManager,
       KitchenFlowWeb.Endpoint
       # Start a worker by calling: KitchenFlow.Worker.start_link(arg)
       # {KitchenFlow.Worker, arg}
