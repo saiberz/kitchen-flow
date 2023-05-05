@@ -3,6 +3,8 @@ defmodule KitchenFlow.Orders do
   alias Ecto.Multi
   alias KitchenFlow.Repo
   alias KitchenFlow.Catalog.MenuItem
+  alias KitchenFlow.Broker.Publisher
+  alias KitchenFlow.Events.OutboxEvent
   alias KitchenFlow.Orders.{Order, StationTicket}
 
   def list_orders do
@@ -35,6 +37,9 @@ defmodule KitchenFlow.Orders do
     |> Multi.insert(:order, Order.changeset(%Order{}, enriched_attrs))
     |> Multi.run(:station_tickets, fn repo, %{order: order} ->
       insert_station_tickets(repo, order)
+    end)
+    |> Multi.run(:outbox_events, fn repo, %{station_tickets: tickets} ->
+      insert_outbox_events(repo, tickets)
     end)
     |> Repo.transaction()
     |> case do
@@ -98,6 +103,25 @@ defmodule KitchenFlow.Orders do
       end)
 
     {:ok, tickets}
+  end
+
+  defp insert_outbox_events(repo, tickets) do
+    events =
+      Enum.map(tickets, fn ticket ->
+        event_id = Ecto.UUID.generate()
+        payload = Publisher.build_ticket_event(ticket, event_id)
+
+        %OutboxEvent{}
+        |> OutboxEvent.changeset(%{
+          event_type: "ticket.routed",
+          routing_key: Publisher.routing_key_for(ticket),
+          payload: payload,
+          status: "pending"
+        })
+        |> repo.insert!()
+      end)
+
+    {:ok, events}
   end
 
   defp enrich_order_items(attrs) do
