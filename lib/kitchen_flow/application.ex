@@ -16,6 +16,7 @@ defmodule KitchenFlow.Application do
       {Phoenix.PubSub, name: KitchenFlow.PubSub},
       # Start the Endpoint (http/https)
       KitchenFlow.Broker.ConnectionManager,
+      {KitchenFlow.Events.OutboxWorker, [poll: Application.get_env(:kitchen_flow, :broker)[:enabled]]},
       KitchenFlow.Broker.StationConsumer,
       KitchenFlowWeb.Endpoint
       # Start a worker by calling: KitchenFlow.Worker.start_link(arg)
