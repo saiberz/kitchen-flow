@@ -44,6 +44,9 @@ defmodule KitchenFlow.Orders do
     |> Repo.transaction()
     |> case do
       {:ok, %{order: order, station_tickets: tickets}} ->
+        if not broker_enabled?() do
+          Enum.each(tickets, &KitchenFlowWeb.StationChannel.broadcast_ticket_event("ticket_created", &1))
+        end
         {:ok, %{order | station_tickets: tickets}}
 
       {:error, :order, changeset, _} ->
@@ -62,6 +65,16 @@ defmodule KitchenFlow.Orders do
       ticket
       |> StationTicket.changeset(Map.put(timestamps, :status, next_status))
       |> Repo.update()
+      |> case do
+        {:ok, updated} ->
+          if not broker_enabled?() do
+            KitchenFlowWeb.StationChannel.broadcast_ticket_event("ticket_updated", updated)
+          end
+          {:ok, updated}
+
+        error ->
+          error
+      end
     else
       {:error, :invalid_transition}
     end

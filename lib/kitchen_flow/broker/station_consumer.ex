@@ -13,6 +13,7 @@ defmodule KitchenFlow.Broker.StationConsumer do
     case Jason.decode(raw_json) do
       {:ok, %{"event_id" => event_id, "ticket_id" => ticket_id, "station" => station} = event}
       when is_binary(event_id) and is_binary(ticket_id) and is_binary(station) ->
+        broadcast_ticket(event)
         {:ok, event}
 
       {:ok, _invalid} ->
