@@ -38,6 +38,7 @@ defmodule KitchenFlow.Broker.ConnectionManager do
 
     case AMQP.Connection.open(url) do
       {:ok, conn} ->
+        Process.monitor(conn.pid)
         {:ok, chan} = AMQP.Channel.open(conn)
         setup_topology(chan, config)
         Logger.info("Connected to RabbitMQ broker and initialized kitchen topology")
@@ -48,6 +49,13 @@ defmodule KitchenFlow.Broker.ConnectionManager do
         Process.send_after(self(), :connect, 3_000)
         {:noreply, %{state | conn: nil, chan: nil}}
     end
+  end
+
+  @impl true
+  def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
+    Logger.warn("RabbitMQ connection lost (#{inspect(reason)}), scheduling reconnect")
+    Process.send_after(self(), :connect, 2_000)
+    {:noreply, %{state | conn: nil, chan: nil}}
   end
 
   def setup_topology(chan, config) do
