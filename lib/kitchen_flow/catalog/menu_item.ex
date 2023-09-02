@@ -11,6 +11,7 @@ defmodule KitchenFlow.Catalog.MenuItem do
   schema "menu_items" do
     field :sku, :string
     field :name, :string
+    field :name_translations, :map, default: %{}
     field :station, :string
     field :course, :string, default: "main"
     field :prep_time_seconds, :integer, default: 300
@@ -22,9 +23,25 @@ defmodule KitchenFlow.Catalog.MenuItem do
 
   def stations, do: @stations
 
+  def localized_name(%__MODULE__{name: default_name, name_translations: translations}, locale)
+      when is_map(translations) and is_binary(locale) do
+    Map.get(translations, locale) || Map.get(translations, "en") || default_name
+  end
+
+  def localized_name(%__MODULE__{name: default_name}, _locale), do: default_name
+
   def changeset(menu_item, attrs) do
     menu_item
-    |> cast(attrs, [:sku, :name, :station, :course, :prep_time_seconds, :price_cents, :available])
+    |> cast(attrs, [
+      :sku,
+      :name,
+      :name_translations,
+      :station,
+      :course,
+      :prep_time_seconds,
+      :price_cents,
+      :available
+    ])
     |> validate_required([:sku, :name, :station, :prep_time_seconds, :price_cents])
     |> validate_inclusion(:station, @stations)
     |> validate_inclusion(:course, @courses)
