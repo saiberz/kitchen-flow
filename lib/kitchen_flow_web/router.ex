@@ -3,6 +3,7 @@ defmodule KitchenFlowWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug KitchenFlowWeb.Plugs.LocalePlug
   end
 
   scope "/api", KitchenFlowWeb do

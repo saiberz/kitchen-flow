@@ -15,6 +15,7 @@ defmodule KitchenFlowWeb.StationTicketView do
       order_id: ticket.order_id,
       station: ticket.station,
       status: ticket.status,
+      status_label: Gettext.dgettext(KitchenFlowWeb.Gettext, "kitchen", ticket.status),
       table_number: ticket.table_number,
       items: ticket.items_payload,
       target_prep_seconds: ticket.target_prep_seconds,
