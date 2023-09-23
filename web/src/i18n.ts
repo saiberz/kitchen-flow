@@ -1,0 +1,61 @@
+import { Locale } from "./types";
+
+export const UI_LABELS: Record<Locale, Record<string, string>> = {
+  en: {
+    title: "Kitchen Display System",
+    all: "All Stations",
+    pickup: "Pickup (Orders)",
+    grill: "Grill",
+    cold: "Cold Kitchen",
+    bar: "Bar",
+    pastry: "Pastry",
+    table: "Table",
+    order: "Order",
+    readyCount: "ready",
+    queued: "Queued",
+    preparing: "Preparing",
+    ready: "Ready",
+    startPrep: "Start Prep",
+    markReady: "Mark Ready",
+    markServed: "Bump / Served",
+    empty: "No active tickets for this station"
+  },
+  es: {
+    title: "Pantalla de Cocina (KDS)",
+    all: "Todas las estaciones",
+    pickup: "Pase (Comandas)",
+    grill: "Parrilla",
+    cold: "Cuarto frío",
+    bar: "Barra",
+    pastry: "Pastelería",
+    table: "Mesa",
+    order: "Comanda",
+    readyCount: "listos",
+    queued: "En cola",
+    preparing: "Preparando",
+    ready: "Listo",
+    startPrep: "Iniciar",
+    markReady: "Listo",
+    markServed: "Entregado",
+    empty: "No hay comandas activas en esta estación"
+  },
+  sv: {
+    title: "Köksskärm (KDS)",
+    all: "Alla stationer",
+    pickup: "Utlämning (Ordrar)",
+    grill: "Grill",
+    cold: "Kallkök",
+    bar: "Bar",
+    pastry: "Konditori",
+    table: "Bord",
+    order: "Order",
+    readyCount: "klara",
+    queued: "I kö",
+    preparing: "Tillagas",
+    ready: "Klar",
+    startPrep: "Börja tillaga",
+    markReady: "Markera klar",
+    markServed: "Serverad",
+    empty: "Inga aktiva bongar för denna station"
+  }
+};
