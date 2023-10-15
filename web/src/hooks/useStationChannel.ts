@@ -32,7 +32,9 @@ export function useStationChannel(station: Station) {
       });
 
     channel.on("ticket_created", (ticket: StationTicket) => {
-      setTickets((prev) => [...prev, ticket]);
+      setTickets((prev) =>
+        prev.some((existing) => existing.id === ticket.id) ? prev : [...prev, ticket]
+      );
     });
 
     channel.on("ticket_updated", (updated: StationTicket) => {
@@ -42,6 +44,7 @@ export function useStationChannel(station: Station) {
     });
 
     return () => {
+      channel.leave();
       socket.disconnect();
     };
   }, [station]);

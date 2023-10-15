@@ -4,7 +4,7 @@ defmodule KitchenFlow.MixProject do
   def project do
     [
       app: :kitchen_flow,
-      version: "0.3.2",
+      version: "0.4.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
