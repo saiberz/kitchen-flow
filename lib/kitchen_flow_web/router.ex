@@ -6,6 +6,17 @@ defmodule KitchenFlowWeb.Router do
     plug KitchenFlowWeb.Plugs.LocalePlug
   end
 
+  pipeline :health do
+    plug :accepts, ["json", "text"]
+  end
+
+  scope "/health", KitchenFlowWeb do
+    pipe_through :health
+
+    get "/live", HealthController, :live
+    get "/ready", HealthController, :ready
+  end
+
   scope "/api", KitchenFlowWeb do
     pipe_through :api
 
