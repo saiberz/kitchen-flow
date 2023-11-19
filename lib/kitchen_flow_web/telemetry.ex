@@ -53,6 +53,11 @@ defmodule KitchenFlowWeb.Telemetry do
           "The time the connection spent waiting before being checked out for the query"
       ),
 
+      # Kitchen Domain Metrics
+      counter("kitchen_flow.tickets.routed.count", tags: [:station]),
+      summary("kitchen_flow.tickets.prep.duration", unit: {:native, :second}, tags: [:station]),
+      last_value("kitchen_flow.outbox.pending.count"),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),

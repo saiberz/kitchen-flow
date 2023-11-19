@@ -15,6 +15,7 @@ defmodule KitchenFlowWeb.Router do
 
     get "/live", HealthController, :live
     get "/ready", HealthController, :ready
+    get "/metrics", HealthController, :metrics
   end
 
   scope "/api", KitchenFlowWeb do

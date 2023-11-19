@@ -45,7 +45,10 @@ defmodule KitchenFlow.Orders do
     |> case do
       {:ok, %{order: order, station_tickets: tickets}} ->
         if not broker_enabled?() do
-          Enum.each(tickets, &KitchenFlowWeb.StationChannel.broadcast_ticket_event("ticket_created", &1))
+          Enum.each(tickets, fn tk ->
+          :telemetry.execute([:kitchen_flow, :tickets, :routed], %{count: 1}, %{station: tk.station})
+          KitchenFlowWeb.StationChannel.broadcast_ticket_event("ticket_created", tk)
+        end)
         end
         {:ok, %{order | station_tickets: tickets}}
 

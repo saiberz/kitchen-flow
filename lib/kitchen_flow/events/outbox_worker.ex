@@ -27,9 +27,13 @@ defmodule KitchenFlow.Events.OutboxWorker do
   end
 
   def pending_count do
-    OutboxEvent
-    |> where([e], e.status == "pending")
-    |> Repo.aggregate(:count, :id)
+    count =
+      OutboxEvent
+      |> where([e], e.status == "pending")
+      |> Repo.aggregate(:count, :id)
+
+    :telemetry.execute([:kitchen_flow, :outbox, :pending], %{count: count}, %{})
+    count
   end
 
   @impl true

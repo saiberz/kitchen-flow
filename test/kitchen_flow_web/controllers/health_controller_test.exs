@@ -10,4 +10,9 @@ defmodule KitchenFlowWeb.HealthControllerTest do
     conn = get(conn, "/health/ready")
     assert %{"status" => "ready", "checks" => %{"database" => "up"}} = json_response(conn, 200)
   end
+
+  test "GET /health/metrics returns prometheus metrics in text format", %{conn: conn} do
+    conn = get(conn, "/health/metrics")
+    assert response(conn, 200) =~ "kitchen_flow_outbox_pending_count"
+  end
 end
