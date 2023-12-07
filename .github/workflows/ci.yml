@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres:15.1-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kitchen_flow_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+      rabbitmq:
+        image: rabbitmq:3.11.5-management-alpine
+        ports:
+          - 5672:5672
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.14.2"
+          otp-version: "25.2"
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+
+      - name: Install dependencies and run tests
+        env:
+          MIX_ENV: test
+        run: |
+          mix local.hex --force
+          mix local.rebar --force
+          mix deps.get
+          mix compile --warnings-as-errors
+          mix test
+
+  web:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install and build web client
+        run: |
+          npm ci
+          npm run build
