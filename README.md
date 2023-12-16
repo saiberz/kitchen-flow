@@ -1,19 +1,31 @@
-# KitchenFlow
+# kitchen-flow
 
-To start your Phoenix server:
+Kitchen order display and ticket router built with Phoenix, RabbitMQ, and React.
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+Orders are split by preparation station and pushed to live boards over WebSockets. Events go through a RabbitMQ topic exchange using an outbox worker so order persistence stays transactional.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Setup
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+Start Postgres and RabbitMQ:
+```bash
+docker compose up -d
+```
 
-## Learn more
+Setup database and start server:
+```bash
+mix setup
+mix phx.server
+```
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Start frontend:
+```bash
+cd web
+npm install
+npm run dev
+```
+
+## Tests
+
+```bash
+mix test
+```
