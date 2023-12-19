@@ -54,7 +54,11 @@ defmodule KitchenFlowWeb.HealthController do
     config = Application.get_env(:kitchen_flow, :broker, [])
 
     if Keyword.get(config, :enabled, true) do
-      match?({:ok, _chan}, ConnectionManager.get_channel())
+      try do
+        match?({:ok, _chan}, ConnectionManager.get_channel())
+      catch
+        :exit, _ -> false
+      end
     else
       true
     end
