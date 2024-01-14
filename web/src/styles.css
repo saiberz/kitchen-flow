@@ -28,7 +28,7 @@ body {
   background: #ef4444;
 }
 .status-dot.online { background: #10b981; }
-.station-tabs button, .locale-switch button {
+.station-tabs button, .locale-switch button, .new-order-btn {
   margin-right: 0.4rem;
   padding: 0.45rem 0.85rem;
   border-radius: 6px;
@@ -58,6 +58,7 @@ body {
 }
 .ticket-card.status-preparing { border-top-color: #f59e0b; }
 .ticket-card.status-ready { border-top-color: #10b981; }
+.ticket-card.sla-breach { border-top-color: #ef4444; }
 .ticket-header {
   display: flex;
   justify-content: space-between;
@@ -174,4 +175,23 @@ body {
 .status-pill-ready {
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
+}
+.new-order-btn {
+  background: #059669;
+  border-color: #10b981;
+  color: #fff;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.demo-toast {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
 }

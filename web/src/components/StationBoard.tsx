@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Locale, StationTicket, TicketStatus } from "../types";
 import { UI_LABELS } from "../i18n";
 
@@ -32,6 +32,20 @@ export const StationBoard: React.FC<Props> = ({
   onTransition
 }) => {
   const t = UI_LABELS[locale];
+  const [nowMs, setNowMs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNowMs(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const getElapsedSeconds = (iso: string): number => {
+    if (!iso) return 0;
+    const normalized = iso.endsWith("Z") ? iso : `${iso}Z`;
+    const ts = new Date(normalized).getTime();
+    if (Number.isNaN(ts)) return 0;
+    return Math.max(0, Math.floor((nowMs - ts) / 1000));
+  };
   const visible = tickets
     .filter((tk) => tk.status !== "served" && tk.status !== "cancelled")
     .sort((a, b) => a.inserted_at.localeCompare(b.inserted_at));
@@ -114,7 +128,7 @@ export const StationBoard: React.FC<Props> = ({
       {visible.map((ticket, idx) => (
         <div
           key={ticket.id}
-          className={`ticket-card status-${ticket.status}`}
+          className={`ticket-card status-${ticket.status} ${ticket.sla_breached || (ticket.status !== "ready" && getElapsedSeconds(ticket.inserted_at) > ticket.target_prep_seconds) ? "sla-breach" : ""}`}
         >
           <header className="ticket-header">
             <div>
@@ -128,7 +142,9 @@ export const StationBoard: React.FC<Props> = ({
           </header>
           <div className="ticket-meta">
             <span>In: {formatArrivalTime(ticket.inserted_at)}</span>
-            <span>Prep: {formatDuration(ticket.target_prep_seconds)}</span>
+            <span>
+              {formatDuration(getElapsedSeconds(ticket.inserted_at))} / {formatDuration(ticket.target_prep_seconds)}
+            </span>
           </div>
           <ul className="ticket-items">
             {ticket.items.map((item) => (

@@ -7,12 +7,17 @@ import "./styles.css";
 
 const STATIONS: Station[] = ["all", "grill", "cold", "bar", "pastry"];
 const LOCALES: Locale[] = ["en", "es", "sv"];
+const DEMO_MODE_ENABLED =
+  import.meta.env.VITE_DEMO_MODE === "true" ||
+  new URLSearchParams(window.location.search).get("demo") === "true";
 
 export const App: React.FC = () => {
   const [station, setStation] = useState<Station>("all");
   const [pickupView, setPickupView] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [demoCreating, setDemoCreating] = useState(false);
+  const [demoNotice, setDemoNotice] = useState<string | null>(null);
   const { tickets, setTickets, connected } = useStationChannel(pickupView ? "all" : station);
   const t = UI_LABELS[locale];
 
@@ -43,6 +48,60 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleSimulateOrder = async () => {
+    if (demoCreating) return;
+    setDemoCreating(true);
+    try {
+      const menuRes = await fetch(`/api/menu-items?lang=${locale}`);
+      const menuBody = await menuRes.json();
+      const items = menuBody.data || [];
+      if (items.length === 0) return;
+
+      const shuffled = [...items].sort(() => Math.random() - 0.5);
+      const count = Math.min(shuffled.length, Math.floor(Math.random() * 3) + 2);
+      const picked = shuffled.slice(0, count).map((m: { id: string }) => ({
+        menu_item_id: m.id,
+        quantity: Math.floor(Math.random() * 2) + 1
+      }));
+
+      const allTables = [1, 2, 3, 4, 5, 6, 7, 8];
+      const activeTables = new Set(
+        tickets
+          .filter((tk) => tk.status !== "served" && tk.status !== "cancelled")
+          .map((tk) => tk.table_number)
+      );
+      const freeTables = allTables.filter((n) => !activeTables.has(n));
+      const pool = freeTables.length > 0 ? freeTables : allTables;
+      const tableNum = pool[Math.floor(Math.random() * pool.length)];
+
+      const res = await fetch(`/api/orders?lang=${locale}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order: {
+            table_number: tableNum,
+            items: picked
+          }
+        })
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        const orderData = created.data;
+        const shortId = (orderData?.id || "").slice(0, 4).toUpperCase();
+        const routedStations = (orderData?.station_tickets || [])
+          .map((tk: { station: string }) => t[tk.station] || tk.station)
+          .join(", ");
+        setDemoNotice(
+          `${t.table} #${tableNum} · ${t.order} #${shortId} → ${routedStations}`
+        );
+        window.setTimeout(() => setDemoNotice(null), 4000);
+      }
+    } finally {
+      setDemoCreating(false);
+    }
+  };
+
   return (
     <div>
       <header className="topbar">
@@ -70,7 +129,17 @@ export const App: React.FC = () => {
             </button>
           ))}
         </nav>
-        <div>
+        <div className="topbar-right">
+          {demoNotice && <span className="demo-toast">{demoNotice}</span>}
+          {DEMO_MODE_ENABLED && (
+            <button
+              className="new-order-btn"
+              onClick={handleSimulateOrder}
+              disabled={demoCreating}
+            >
+              {demoCreating ? "..." : "+ Demo Order"}
+            </button>
+          )}
           <span className="locale-switch">
             {LOCALES.map((loc) => (
               <button

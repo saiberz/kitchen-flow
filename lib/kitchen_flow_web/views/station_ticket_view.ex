@@ -1,5 +1,6 @@
 defmodule KitchenFlowWeb.StationTicketView do
   use KitchenFlowWeb, :view
+  alias KitchenFlow.Orders.StationTicket
 
   def render("index.json", %{tickets: tickets}) do
     %{data: render_many(tickets, __MODULE__, "ticket.json", as: :ticket)}
@@ -19,6 +20,7 @@ defmodule KitchenFlowWeb.StationTicketView do
       table_number: ticket.table_number,
       items: ticket.items_payload,
       target_prep_seconds: ticket.target_prep_seconds,
+      sla_breached: StationTicket.sla_breached?(ticket, NaiveDateTime.utc_now()),
       started_at: ticket.started_at,
       ready_at: ticket.ready_at,
       served_at: ticket.served_at,

@@ -30,6 +30,7 @@ export interface StationTicket {
   table_number: number;
   items: TicketItem[];
   target_prep_seconds: number;
+  sla_breached?: boolean;
   started_at?: string;
   ready_at?: string;
   inserted_at: string;

@@ -45,4 +45,14 @@ defmodule KitchenFlow.Orders.StationTicket do
   def valid_transition?("preparing", "cancelled"), do: true
   def valid_transition?("ready", "served"), do: true
   def valid_transition?(_, _), do: false
+
+  def sla_breached?(%__MODULE__{status: status}, _now) when status in ["ready", "served", "cancelled"],
+    do: false
+
+  def sla_breached?(%__MODULE__{inserted_at: nil}, _now), do: false
+
+  def sla_breached?(%__MODULE__{inserted_at: inserted_at, target_prep_seconds: target}, now) do
+    elapsed = NaiveDateTime.diff(now, inserted_at, :second)
+    elapsed > target
+  end
 end

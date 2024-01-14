@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+- Add ticket preparation timers and demo order generator.
+
 ## 1.0.1
 - Fix broker readiness check timeout when RabbitMQ is unavailable.
 

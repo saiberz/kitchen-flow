@@ -24,6 +24,8 @@ npm install
 npm run dev
 ```
 
+Append `?demo=true` to the URL to enable sample order generation.
+
 ## Tests
 
 ```bash
