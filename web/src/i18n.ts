@@ -52,7 +52,7 @@ export const UI_LABELS: Record<Locale, Record<string, string>> = {
     readyCount: "klara",
     queued: "I kö",
     preparing: "Tillagas",
-    ready: "Klar",
+    ready: "Klar för servering",
     startPrep: "Börja tillaga",
     markReady: "Markera klar",
     markServed: "Serverad",

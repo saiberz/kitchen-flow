@@ -2,7 +2,7 @@
 
 Kitchen order display and ticket router built with Phoenix, RabbitMQ, and React.
 
-Orders are split by preparation station and pushed to live boards over WebSockets. Events go through a RabbitMQ topic exchange using an outbox worker so order persistence stays transactional.
+Orders are split by preparation station and pushed to live boards over WebSockets. Supports multiple display languages for station screens. Events go through a RabbitMQ topic exchange using an outbox worker so order persistence stays transactional.
 
 ## Setup
 

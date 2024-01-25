@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+- Update translations for station ticket statuses.
+
 ## 1.1.0
 - Add ticket preparation timers and demo order generator.
 
