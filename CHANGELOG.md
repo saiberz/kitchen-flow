@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.2
+- Upgrade runtime to Elixir 1.15 and update base container images.
+
 ## 1.1.1
 - Update translations for station ticket statuses.
 

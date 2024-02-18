@@ -51,7 +51,7 @@ defmodule KitchenFlow.Events.OutboxWorker do
       flush_pending()
     rescue
       err ->
-        Logger.warn("Outbox flush failed cleanly: #{Exception.message(err)}")
+        Logger.warning("Outbox flush failed cleanly: #{Exception.message(err)}")
     end
 
     schedule_poll()

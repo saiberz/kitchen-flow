@@ -92,7 +92,7 @@ defmodule KitchenFlow.Broker.StationConsumer do
         AMQP.Basic.ack(chan, tag)
 
       {:error, reason} ->
-        Logger.warn("Rejecting malformed station event to DLQ (#{inspect(reason)})")
+        Logger.warning("Rejecting malformed station event to DLQ (#{inspect(reason)})")
         AMQP.Basic.reject(chan, tag, requeue: false)
     end
 

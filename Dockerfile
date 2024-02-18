@@ -1,4 +1,4 @@
-FROM elixir:1.14.2-slim AS build
+FROM elixir:1.15.7-slim AS build
 
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*

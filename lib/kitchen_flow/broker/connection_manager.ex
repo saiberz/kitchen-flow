@@ -45,7 +45,7 @@ defmodule KitchenFlow.Broker.ConnectionManager do
         {:noreply, %{state | conn: conn, chan: chan}}
 
       {:error, reason} ->
-        Logger.warn("Failed to connect to RabbitMQ (#{inspect(reason)}), retrying in 3s")
+        Logger.warning("Failed to connect to RabbitMQ (#{inspect(reason)}), retrying in 3s")
         Process.send_after(self(), :connect, 3_000)
         {:noreply, %{state | conn: nil, chan: nil}}
     end
@@ -53,7 +53,7 @@ defmodule KitchenFlow.Broker.ConnectionManager do
 
   @impl true
   def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
-    Logger.warn("RabbitMQ connection lost (#{inspect(reason)}), scheduling reconnect")
+    Logger.warning("RabbitMQ connection lost (#{inspect(reason)}), scheduling reconnect")
     Process.send_after(self(), :connect, 2_000)
     {:noreply, %{state | conn: nil, chan: nil}}
   end
